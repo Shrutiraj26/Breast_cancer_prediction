@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breast Cancer Prediction</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f4f8;
+            color: #333;
+        }
+        header {
+            background: #1a73e8;
+            color: white;
+            padding: 20px 40px;
+        }
+        header h1 { font-size: 1.8rem; }
+        header p { font-size: 0.95rem; margin-top: 4px; opacity: 0.9; }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            margin-bottom: 24px;
+        }
+        .card h2 {
+            font-size: 1.1rem;
+            color: #1a73e8;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e8f0fe;
+            padding-bottom: 10px;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.78rem;
+            color: #555;
+            margin-bottom: 4px;
+            text-transform: capitalize;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: border 0.2s;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #1a73e8;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+        .btn:hover { background: #1558b0; }
+        .result {
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .result.malignant { background: #fce8e6; border: 1px solid #f44336; }
+        .result.benign { background: #e6f4ea; border: 1px solid #34a853; }
+        .result h2 { font-size: 1.6rem; margin-bottom: 8px; }
+        .result.malignant h2 { color: #c62828; }
+        .result.benign h2 { color: #2e7d32; }
+        .result p { font-size: 1rem; color: #555; }
+        .error {
+            background: #fff3e0;
+            border: 1px solid #ff9800;
+            padding: 14px;
+            border-radius: 8px;
+            color: #e65100;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 600px) {
+            .features-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Breast Cancer Prediction</h1>
+        <p>Enter 30 clinical features to predict tumor diagnosis using a Random Forest model (98% accuracy)</p>
+    </header>
+
+    <div class="container">
+
+        {% if result %}
+        <div class="card">
+            <div class="result {{ 'malignant' if result.is_malignant else 'benign' }}">
+                <h2>{{ result.prediction }}</h2>
+                <p>Model Confidence: <strong>{{ result.confidence }}</strong></p>
+                <p style="margin-top:8px; font-size:0.85rem;">
+                    {% if result.is_malignant %}
+                    The tumor shows characteristics of a malignant (cancerous) mass. Please consult a medical professional.
+                    {% else %}
+                    The tumor shows characteristics of a benign (non-cancerous) mass.
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if error %}
+        <div class="error">Error: {{ error }}</div>
+        {% endif %}
+
+        <form method="POST" action="/predict">
+            <div class="card">
+                <h2>Mean Features</h2>
+                <div class="features-grid">
+                    {% for feature in features[:10] %}
+                    <div class="form-group">
+                        <label>{{ feature.replace('_', ' ') }}</label>
+                        <input type="number" step="any" name="{{ feature }}" placeholder="0.00" required>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Standard Error Features</h2>
+                <div class="features-grid">
+                    {% for feature in features[10:20] %}
+                    <div class="form-group">
+                        <label>{{ feature.replace('_', ' ') }}</label>
+                        <input type="number" step="any" name="{{ feature }}" placeholder="0.00" required>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Worst Features</h2>
+                <div class="features-grid">
+                    {% for feature in features[20:] %}
+                    <div class="form-group">
+                        <label>{{ feature.replace('_', ' ') }}</label>
+                        <input type="number" step="any" name="{{ feature }}" placeholder="0.00" required>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <button type="submit" class="btn">Predict Diagnosis</button>
+        </form>
+
+    </div>
+</body>
+</html>

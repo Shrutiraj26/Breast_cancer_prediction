@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Load the dataset
-file_path = 'data_breast cancer.csv'  # Ensure this points to the correct CSV file
+file_path = 'data_breast_cancer.csv'  # Dataset file
 data = pd.read_csv(file_path)
 
 # Data preprocessing
