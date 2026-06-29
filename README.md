@@ -4,7 +4,7 @@ A machine learning web application that predicts whether a breast tumor is **mal
 
 ## Live Demo
 
-Enter 30 clinical measurements and get an instant prediction with confidence score.
+**https://breast-cancer-prediction-0yq7.onrender.com**
 
 ## Features
 
